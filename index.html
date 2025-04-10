@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Tracker - Ubah dan Lacak Link</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            word-break: break-all;
+        }
+        .logs-link {
+            display: block;
+            margin-top: 30px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Link Tracker</h1>
+    <p>Ubah link Anda dan dapatkan informasi ketika ada yang membukanya.</p>
+    
+    <div class="form-group">
+        <label for="original-url">Link Asli:</label>
+        <input type="text" id="original-url" placeholder="https://contoh.com" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="custom-path">Path Kustom (opsional):</label>
+        <input type="text" id="custom-path" placeholder="nama-link-anda">
+        <small>Jika dikosongkan, akan dibuat secara acak</small>
+    </div>
+    
+    <div class="form-group">
+        <label for="email">Email Anda (opsional):</label>
+        <input type="email" id="email" placeholder="email@anda.com">
+        <small>Untuk menerima notifikasi ketika link dibuka</small>
+    </div>
+    
+    <button onclick="generateLink()">Buat Link</button>
+    
+    <div id="result" class="result" style="display: none;"></div>
+    
+    <a href="view-logs.php" class="logs-link">Lihat Log Pelacakan</a>
+    
+    <script>
+        function generateLink() {
+            const originalUrl = document.getElementById('original-url').value;
+            const customPath = document.getElementById('custom-path').value;
+            const email = document.getElementById('email').value;
+            
+            if (!originalUrl) {
+                alert('Silakan masukkan link asli');
+                return;
+            }
+            
+            // Validasi URL
+            try {
+                new URL(originalUrl);
+            } catch (e) {
+                alert('Link asli tidak valid. Pastikan dimulai dengan http:// atau https://');
+                return;
+            }
+            
+            const path = customPath || generateRandomPath();
+            const trackerUrl = window.location.href.replace('index.html', '') + 'tracker.php?p=' + path;
+            
+            // Simpan ke localStorage untuk contoh sederhana
+            const links = JSON.parse(localStorage.getItem('trackedLinks') || '[]');
+            links.push({
+                originalUrl,
+                trackerUrl,
+                path,
+                email,
+                createdAt: new Date().toISOString()
+            });
+            localStorage.setItem('trackedLinks', JSON.stringify(links));
+            
+            // Tampilkan hasil
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <h3>Link Tracker Anda:</h3>
+                <p><a href="${trackerUrl}" target="_blank">${trackerUrl}</a></p>
+                <p>Link asli: ${originalUrl}</p>
+                <p>Ketika seseorang membuka link di atas, sistem akan mencatat informasi perangkat mereka dan mengarahkan ke link asli.</p>
+            `;
+            resultDiv.style.display = 'block';
+        }
+        
+        function generateRandomPath() {
+            return 'l-' + Math.random().toString(36).substring(2, 8);
+        }
+    </script>
+</body>
+</html>
