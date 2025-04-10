@@ -131,6 +131,22 @@
         function generateRandomPath() {
             return 'l-' + Math.random().toString(36).substring(2, 8);
         }
+
+    // Di dalam fungsi generateLink()
+    const trackerUrl = window.location.href.replace('index.html', '') + 'tracker.php?p=' + path;
+    
+    // Ganti dengan ini untuk menggunakan view.php sebagai tampilan
+    const viewUrl = window.location.href.replace('index.html', '') + 'view.php?p=' + path;
+    const trackerUrl = window.location.href.replace('index.html', '') + 'tracker.php?p=' + path;
+    
+    // Di dalam resultDiv.innerHTML, ganti link dengan viewUrl
+    resultDiv.innerHTML = `
+        <h3>Link Tracker Anda:</h3>
+        <p><a href="${trackerUrl}" target="_blank">${trackerUrl}</a></p>
+        <p>Link asli: ${originalUrl}</p>
+        <p>Link untuk melihat info: <a href="${viewUrl}" target="_blank">${viewUrl}</a></p>
+        <p>Ketika seseorang membuka link tracker, informasi perangkat mereka akan ditampilkan di halaman view.</p>
+    `;
     </script>
 </body>
 </html>
